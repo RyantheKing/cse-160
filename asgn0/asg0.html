@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Ryan King - Assignment 0</title>
+    </head>
+
+    <body onload="main()">
+        <h3>Ryan King</h3>
+        <a href="mailto:rytking@ucsc.edu">rytking@ucsc.edu</a>
+        <br><br>
+
+        <canvas id="asgn0" width="400" height="400">
+            Please use a browser that supports "canvas"
+        </canvas>
+        <br><br>
+        <label for="vector-1">v1: </label>
+        <label for="vector-x1">x</label>
+        <input type="text" id="vector-x1" size="4">
+        <label for="vector-y1">y</label>
+        <input type="text" id="vector-y1" size="4">
+        <br>
+        <label for="vector-2">v2: </label>
+        <label for="vector-x2">x</label>
+        <input type="text" id="vector-x2" size="4">
+        <label for="vector-y2">y</label>
+        <input type="text" id="vector-y2" size="4">
+        <!--draw button-->
+        <br>
+        <button onclick="handleDrawEvent()">Draw</button>
+        <br><br>
+        <label for="operation">Operation: </label>
+        <select id="operation">
+            <option value="add">Add</option>
+            <option value="sub">Subtract</option>
+            <option value="mul">Multiply</option>
+            <option value="div">Divide</option>
+            <option value="dot">Angle Between</option>
+            <option value="area">Area</option>
+            <option value="mag">Magnitude</option>
+            <option value="norm">Normalize</option>
+        </select>
+        <label for="scalar">Scalar: </label>
+        <input type="text" id="scalar" size="4">
+        <br>
+        <button onclick="handleDrawOperationEvent()">Draw</button>
+
+        <script src="asg0.js"></script>
+        <script src="lib/cuon-matrix-cse160.js"></script>
+    </body>
+</html>
