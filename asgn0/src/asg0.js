@@ -79,15 +79,15 @@ function handleDrawOperationEvent() {
         drawVector(v4, 'green');
     } else if (operation === 'dot') {
         let angle = angleBetween(v1, v2);
-        console.log('Angle: ' + angle);
+        console.log('Angle: ' + angle.toFixed(4));
     } else if (operation === 'area') {
         let area = areaTriangle(v1, v2);
-        console.log('Area: ' + area);
+        console.log('Area: ' + area.toFixed(4));
     } else if (operation === 'mag') {
         let mag1 = v1.magnitude();
         let mag2 = v2.magnitude();
-        console.log('Magnitude v1: ' + mag1);
-        console.log('Magnitude v2: ' + mag2);
+        console.log('Magnitude v1: ' + mag1.toFixed(4));
+        console.log('Magnitude v2: ' + mag2.toFixed(4));
     } else if (operation === 'norm') {
         let v3 = v1.normalize();
         let v4 = v2.normalize();
