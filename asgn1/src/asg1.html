@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Ryan King - Assignment 1</title>
+    </head>
+
+    <body onload="main()">
+        <h3>Ryan King</h3>
+        <a href="mailto:rytking@ucsc.edu">rytking@ucsc.edu</a>
+        <br><br>
+
+        <canvas id="asgn1" width="400" height="400">
+            Please use a browser that supports "canvas"
+        </canvas>
+        <br><br>
+        <button onclick="clearCanvas()">Clear Canvas</button>
+        <br><br>
+        <span>Drawing Mode:</span>
+        <br>
+        <button onclick="shape = 'square'">Squares</button>
+        <button onclick="shape = 'triangle'">Triangles</button>
+        <button onclick="shape = 'circle'">Circles</button>
+        <br><br>
+        <span>Shape Color:</span>
+        <br>
+        <label for="red">Red</label>
+        <input type="range" id="red" min="0" max="255" value="255">
+        <label for="green">Green</label>
+        <input type="range" id="green" min="0" max="255" value="255">
+        <label for="blue">Blue</label>
+        <input type="range" id="blue" min="0" max="255" value="255">
+        <br><br>
+        <label for="size">Shape Size: </label>
+        <input type="range" id="shape_size" min="1" max="200" value="20">
+        <label for="seg-count">(Circles) Segment Count:</label>
+        <input type="range" id="seg-count" min="3" max="100" value="20">
+
+        <script src="asg1.js"></script>
+        <script src="../lib/cuon-matrix-cse160.js"></script>
+        <script src="../lib/webgl-utils.js"></script>
+        <script src="../lib/webgl-debug.js"></script>
+        <script src="../lib/cuon-utils.js"></script>
+    </body>
+</html>
