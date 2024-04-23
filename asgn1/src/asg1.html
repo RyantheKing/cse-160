@@ -15,6 +15,7 @@
         </canvas>
         <br><br>
         <button onclick="clearCanvas()">Clear Canvas</button>
+        <button onclick="clearCanvas(); showDrawing()">Show Drawing</button>
         <br><br>
         <span>Drawing Mode:</span>
         <br>
@@ -30,11 +31,22 @@
         <input type="range" id="green" min="0" max="255" value="255">
         <label for="blue">Blue</label>
         <input type="range" id="blue" min="0" max="255" value="255">
+        <!-- <br>
+        <label for="alpha">Transparency</label>
+        <input type="range" id="alpha" min="0" max="100" value="100"> -->
         <br><br>
         <label for="size">Shape Size: </label>
         <input type="range" id="shape_size" min="1" max="200" value="20">
-        <label for="seg-count">(Circles) Segment Count:</label>
-        <input type="range" id="seg-count" min="3" max="100" value="20">
+        <label for="seg_count">(Circles) Segment Count:</label>
+        <!-- make slider length 400px-->
+        <input type="range" id="seg_count" min="3" max="100" value="20">
+        <!--Auto-segment checkbox-->
+        <br><br>
+        <label for="auto_seg">Auto-Segment</label>
+        <input type="checkbox" id="auto_seg" onclick="autoSegment()">
+        <!--Rainbow checkbox-->
+        <label for="rainbow">Rainbow Mode</label>
+        <input type="checkbox" id="rainbow" onclick="rainbowMode()">
 
         <script src="asg1.js"></script>
         <script src="../lib/cuon-matrix-cse160.js"></script>
