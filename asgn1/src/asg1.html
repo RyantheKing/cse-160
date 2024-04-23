@@ -48,6 +48,9 @@
         <label for="rainbow">Rainbow Mode</label>
         <input type="checkbox" id="rainbow" onclick="rainbowMode()">
 
+        <p>Auto-Segment sets the slider for segment count automatically so that when you are drawing in circles mode, the minimum number of segments necessary to not degrade the roundness of the circle is drawn. This saves drawing time for smaller circles, while automatically increasing the number of segments for large circles so that they still look perfectly circular.</p>
+        <p>Rainbow Mode moves the sliders smoothly through all the colors while shapes are being drawn to create a rainbow effect instead of using the manually set color.</p>
+
         <script src="asg1.js"></script>
         <script src="../lib/cuon-matrix-cse160.js"></script>
         <script src="../lib/webgl-utils.js"></script>
