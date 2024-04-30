@@ -1,0 +1,22 @@
+# Blender 4.0.2 MTL File: 'None'
+# www.blender.org
+
+newmtl blank_
+Ns 96.078453
+Ka 1.000000 1.000000 1.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd Tex_RGB_0.jpeg
+map_Ks starship_exploded_exterrior_spec.png
+map_Ke Tex_RGB_1.jpeg
+
+newmtl wire_255255255
+Ns 9.849158
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
