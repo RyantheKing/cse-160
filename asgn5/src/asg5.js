@@ -13,12 +13,12 @@ function main() {
 
 	const fov = 60;
 	const aspect = 2; // the canvas default
-	const near = 0.01;
+	const near = 0.015;
 	const far = 500;
 
 	let planet_lock = false;
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-	camera.position.set(-30, 10, 60);
+	camera.position.set(-60, 10, 60);
 
 	const controls = new OrbitControls(camera, canvas);
 	controls.target.set(0, 0, 0);
@@ -38,14 +38,31 @@ function main() {
 	}
 
 	{
+		// directional light
 		const color = 0xFFFFFF;
-		const intensity = 3;
+		const intensity = 5;
 		const light = new THREE.DirectionalLight(color, intensity);
-		light.position.set(50, 0, 50);
+		light.position.set(0, 0, 100);
 		scene.add(light);
 		scene.add(light.target);
-		// make shadow softer
 	}
+
+	{
+		// ambient light
+		const color = 0xFFFFFF;
+		const intensity = 0.02;
+		const light = new THREE.AmbientLight(color, intensity);
+		scene.add(light);
+	}
+
+	// {
+	// 	// point light
+	// 	const color = 0xFFFFFF;
+	// 	const intensity = 50000;
+	// 	const light = new THREE.PointLight(color, intensity);
+	// 	light.position.set(0, 0, 100);
+	// 	scene.add(light);
+	// }
 
 	let planet;
 	{
@@ -71,6 +88,15 @@ function main() {
 		});
 	}
 
+	// planet orbit ring
+	{
+		const geometry = new THREE.TorusGeometry(15, 0.1, 16, 128);
+		const material = new THREE.MeshBasicMaterial({ color: 0x888888, side: THREE.DoubleSide });
+		const ring = new THREE.Mesh(geometry, material);
+		ring.rotation.set(Math.PI/2, 0, 0);
+		scene.add(ring);
+	}
+
 	let moon1;
 	{
 		const mtlLoader = new MTLLoader();
@@ -86,12 +112,21 @@ function main() {
 						child.material = basicMaterial;
 					}
 				});
-				root.position.set(0, -25, 0);
+				root.position.set(0, -30, 0);
 				root.scale.set(8, 8, 8);
 				scene.add(root);
 				moon1 = root;
 			});
 		});
+	}
+
+	// moon1 orbit ring
+	{
+		const geometry = new THREE.TorusGeometry(30, 0.1, 16, 128);
+		const material = new THREE.MeshBasicMaterial({ color: 0x888888, side: THREE.DoubleSide });
+		const ring = new THREE.Mesh(geometry, material);
+		ring.rotation.set(0, 0, 0);
+		scene.add(ring);
 	}
 
 	let moon2;
@@ -115,6 +150,15 @@ function main() {
 				moon2 = root;
 			});
 		});
+	}
+
+	// moon2 orbit ring
+	{
+		const geometry = new THREE.TorusGeometry(60, 0.05, 16, 128);
+		const material = new THREE.MeshBasicMaterial({ color: 0x888888, side: THREE.DoubleSide });
+		const ring = new THREE.Mesh(geometry, material);
+		ring.rotation.set(Math.PI/2, 0, 0);
+		scene.add(ring);
 	}
 
 	// let ship;
@@ -161,6 +205,7 @@ function main() {
 
 	function render(time) {
 		let prev_lock = planet_lock;
+		let rotation_multiplier = document.getElementById('time-multiplier').value;
 		planet_lock = document.getElementById('lock').checked;
 		time *= 0.001;
 		if (resizeRendererToDisplaySize(renderer)) {
@@ -170,22 +215,23 @@ function main() {
 			camera.updateProjectionMatrix();
 		}
 		// calculate planet position, rotates around 0,0,0. 1 minute to rotate around the sun.
+		let radians_time = rotation_multiplier*time*Math.PI/1200;
 		if (planet) {
 			// revolve around 0,0,0 at an angle of 0.7 radians from the xz plane
-			planet.position.x = Math.cos(time/2) * 15;
-			planet.position.z = Math.sin(time/2) * 15;
-			planet.rotation.y = -time/2;
+			planet.position.x = Math.cos(radians_time) * 15;
+			planet.position.z = Math.sin(radians_time) * 15;
+			planet.rotation.y = -radians_time;
 			// tidally lock camera to planet, rotate with planet
 		}
 		if (moon1) {
-			moon1.position.x = Math.sin(time/2) * -25;
-			moon1.position.y = Math.cos(time/2) * -25;
-			moon1.rotation.y = -time/2;
+			moon1.position.x = Math.sin(radians_time) * -30;
+			moon1.position.y = Math.cos(radians_time) * -30;
+			moon1.rotation.y = -radians_time;
 		}
 		if (moon2) {
-			moon2.position.x = Math.cos(time/2) * -60;
-			moon2.position.z = Math.sin(time/2) * -60;
-			moon2.rotation.y = -time/2;
+			moon2.position.x = Math.cos(radians_time) * -60;
+			moon2.position.z = Math.sin(radians_time) * -60;
+			moon2.rotation.y = -radians_time
 		}
 		if (planet_lock && planet) {
 			camera.position.x = planet.position.x*1.75;
@@ -194,7 +240,7 @@ function main() {
 			// define planet edge position
 			camera.lookAt(planet.position.x-planet.position.z/2.2, 15, planet.position.z+planet.position.x/2.2);
 		} else if (prev_lock) {
-			camera.position.set(-30, 10, 60);
+			camera.position.set(-60, 10, 60);
 			controls.target.set(0, 0, 0);
 			controls.update();
 			ship_group.position.set(0, 0, 0);
