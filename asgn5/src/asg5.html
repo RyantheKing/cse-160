@@ -28,11 +28,19 @@
         <h3>Ryan King</h3>
         <a href="mailto:rytking@ucsc.edu">rytking@ucsc.edu</a>
         <br><br>
-        <canvas id="c" width="900" height="450"></canvas>
-        <!--Add planet lock checkbox-->
+        <canvas id="c" width="1200" height="600"></canvas>
+        <!--Camera View-->
         <br>
-        <label for="lock">Lock Planet View</label>
-        <input type="checkbox" id="lock">
+        <label for="view">Camera View</label>
+        <select id="view">
+            <option value="system" selected>4546B System</option>
+            <option value="ship">Landing Space Ship</option>
+            <option value="planet">Planet Surface</option>
+        </select>
+        <span style="margin-right: 20px;"></span>
+        <!--Enable Orbit Path Lines-->
+        <label for="rings">Enable Orbital Path Lines</label>
+        <input type="checkbox" id="rings">
         <br>
         <!--Time Speed Multiplier Slider-->
         <label for="time-multiplier">Time Multiplier 1-500 (1x = Real-time 4546B planet system speed)</label>
