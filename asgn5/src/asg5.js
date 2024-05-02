@@ -36,12 +36,15 @@ function main() {
 		});
 	}
 
+	let sun_theta = document.getElementById('sun').value*Math.PI/180;
+	let directional_light;
+	let sun_position = new THREE.Vector3(4000*Math.sin(sun_theta), 0, 4000*Math.cos(sun_theta));
 	{
 		// directional light
 		const color = 0xFFFFFF;
 		const intensity = 5;
 		const light = new THREE.DirectionalLight(color, intensity);
-		light.position.set(0, 0, 100);
+		light.position.set(sun_position);
 		light.castShadow = true;
 		light.shadow.mapSize.width = 2048;
 		light.shadow.mapSize.height = 2048;
@@ -49,23 +52,27 @@ function main() {
 		light.shadow.camera.far = 500;
 		scene.add(light);
 		scene.add(light.target);
+		directional_light = light;
 	}
 
 	// sun
+	let sun_obj;
+	let cones = [];
 	{
 		const geometry = new THREE.SphereGeometry(100, 16, 16);
 		const material = new THREE.MeshBasicMaterial({ color: 0xFFFFAA });
 		const sun = new THREE.Mesh(geometry, material);
-		sun.position.set(0, 0, 4000);
+		sun.position.set(sun_position);
+		sun_obj = sun;
 		scene.add(sun);
 		// add cones
-		var numCones = 316;
+		var numCones = 256;
 
 		// Add cones
 		for (var i = 0; i < numCones; i++) {
 			// Create cone geometry
 			var coneGeometry = new THREE.ConeGeometry(10, 50, 8);
-			var coneMaterial = new THREE.MeshBasicMaterial({ color: 0xFFBB00 });
+			var coneMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFAA });
 			var cone = new THREE.Mesh(coneGeometry, coneMaterial);
 			
 			// Calculate position using spherical coordinates
@@ -78,13 +85,14 @@ function main() {
 			var z = Math.cos(phi) * (sun.geometry.parameters.radius + 1);
 			
 			// Position the cone
-			cone.position.set(x, y, z+4000);
+			cone.position.set(x+sun_position.x, y, z+sun_position.z);
 
 			// face sun
 			cone.geometry.rotateX(-Math.PI / 2 );
-			cone.lookAt(0, 0, 4000);
+			cone.lookAt(sun_position);
 			
 			// Add cone to the scene
+			cones.push(cone);
 			scene.add(cone);
 		}
 	}
@@ -291,6 +299,26 @@ function main() {
 			const canvas = renderer.domElement;
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
+		}
+		sun_theta = document.getElementById('sun').value*Math.PI/180;
+		sun_position.set(4000*Math.sin(sun_theta), 0, 4000*Math.cos(sun_theta));
+
+		if (directional_light) {
+			directional_light.position.set(sun_position.x, sun_position.y, sun_position.z);
+		}
+
+		if (sun_obj && cones.length === 256) {
+			sun_obj.position.set(sun_position);
+			for (let i = 0; i < cones.length; i++) {
+				let cone = cones[i];
+				let phi = Math.acos(-1 + (2 * i) / 256);
+				let theta = Math.sqrt(256 * Math.PI) * phi;
+				let x = Math.cos(theta) * Math.sin(phi) * (sun_obj.geometry.parameters.radius + 1);
+				let y = Math.sin(theta) * Math.sin(phi) * (sun_obj.geometry.parameters.radius + 1);
+				let z = Math.cos(phi) * (sun_obj.geometry.parameters.radius + 1);
+				cone.position.set(x+sun_position.x, y, z+sun_position.z);
+				cone.lookAt(sun_position);
+			}
 		}
 
 		if (document.getElementById('rings').checked) {
