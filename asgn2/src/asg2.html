@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Ryan King - Assignment 1</title>
+    </head>
+
+    <body onload="main()">
+        <h3>Ryan King</h3>
+        <a href="mailto:rytking@ucsc.edu">rytking@ucsc.edu</a>
+        <br><br>
+
+        <canvas id="asgn2" width="400" height="400">
+            Please use a browser that supports "canvas"
+        </canvas>
+        <br><br>
+        <p id="out"> XXX </p>
+        <br><br>
+        <label for="cameraAngle">Camera Angle</label>
+        <input type="range" id="cameraAngle" min="0" max="360" value="15">
+        <br><br>
+        <label for="tailRotation">Tail Rotation</label>
+        <input type="range" id="tailRotation" min="-90" max="90" value="0">
+        <br><br>
+        <label for="headRotation">Head Rotation</label>
+        <input type="range" id="headRotation" min="-45" max="45" value="0">
+        <!-- <button onclick="clearCanvas()">Clear Canvas</button>
+        <button onclick="clearCanvas(); showDrawing()">Show Drawing</button>
+        <br><br>
+        <span>Drawing Mode:</span>
+        <br>
+        <button onclick="shape = 'square'">Squares</button>
+        <button onclick="shape = 'triangle'">Triangles</button>
+        <button onclick="shape = 'circle'">Circles</button>
+        <br><br>
+        <span>Shape Color:</span>
+        <br>
+        <label for="red">Red</label>
+        <input type="range" id="red" min="0" max="255" value="255">
+        <label for="green">Green</label>
+        <input type="range" id="green" min="0" max="255" value="255">
+        <label for="blue">Blue</label>
+        <input type="range" id="blue" min="0" max="255" value="255">
+        <br><br>
+        <label for="size">Shape Size: </label>
+        <input type="range" id="shape_size" min="1" max="200" value="20">
+        <label for="seg_count">(Circles) Segment Count:</label>
+        <input type="range" id="seg_count" min="3" max="100" value="20">
+        <br><br>
+        <label for="auto_seg">Auto-Segment</label>
+        <input type="checkbox" id="auto_seg" onclick="autoSegment()">
+        <label for="rainbow">Rainbow Mode</label>
+        <input type="checkbox" id="rainbow" onclick="rainbowMode()">
+
+        <p>Auto-Segment sets the slider for segment count automatically so that when you are drawing in circles mode, the minimum number of segments necessary to not degrade the roundness of the circle is drawn. This saves drawing time for smaller circles, while automatically increasing the number of segments for large circles so that they still look perfectly circular.</p>
+        <p>Rainbow Mode moves the sliders smoothly through all the colors while shapes are being drawn to create a rainbow effect instead of using the manually set color.</p>
+
+        <p>Reference Image and Sketch</p>
+        <img src="../assets/cyclops_sketch.png" alt="Sketch" width="600">
+        <img src="../assets/cyclops_reference.png" alt="Reference Image" height="400"> -->
+
+        <script src="asg2.js"></script>
+        <script src="../lib/cuon-matrix-cse160.js"></script>
+        <script src="../lib/webgl-utils.js"></script>
+        <script src="../lib/webgl-debug.js"></script>
+        <script src="../lib/cuon-utils.js"></script>
+        <script src="cube.js"></script>
+        <script src="triangle.js"></script>
+        <!-- <script src="circle.js"></script> -->
+        <script src="cylinder.js"></script>
+    </body>
+</html>
