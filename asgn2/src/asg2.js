@@ -141,8 +141,8 @@ function renderAllShapes() {
     if (animated) {
         g_mandibleAngle = Math.sin(g_seconds*5)*45/2+15/2;
         g_headAngle = Math.sin(g_seconds*2)*30;
-        g_tailAngle = Math.sin(g_seconds*2)*20;
-        g_tailHoriz = Math.sin(g_seconds)*10;
+        g_tailAngle = Math.sin(g_seconds*2)*16;
+        g_tailHoriz = Math.sin(g_seconds)*8;
     }
     
     let globalRotMat = new Matrix4()
