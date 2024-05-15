@@ -16,7 +16,10 @@ class Cylinder {
         drawCircle3D([0, 0, -0.5], 0.5, this.segments);
         let rad_step = 2 * Math.PI / this.segments;
         let x1, y1, x2, y2;
+        let c = 0;
         for (let i = 0; i < this.segments; i++) {
+            gl.uniform4f(u_FragColor, rgba[0]*(1-c/10), rgba[1]*(1-c/10), rgba[2]*(1-c/10), rgba[3]);
+            if (i >= 5) {c--;} else {c++;}
             x1 = Math.cos(rad_step * i)/2;
             y1 = Math.sin(rad_step * i)/2;
             x2 = Math.cos(rad_step * (i + 1))/2;

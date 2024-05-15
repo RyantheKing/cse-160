@@ -9,21 +9,29 @@
         <h3>Ryan King</h3>
         <a href="mailto:rytking@ucsc.edu">rytking@ucsc.edu</a>
         <br><br>
-
         <canvas id="asgn2" width="400" height="400">
             Please use a browser that supports "canvas"
         </canvas>
         <br><br>
-        <p id="out"> XXX </p>
+        <label for="animated">Animation</label>
+        <input type="checkbox" id="animated">
+        <span id="out"> XXX </span>
         <br><br>
-        <label for="cameraAngle">Camera Angle</label>
-        <input type="range" id="cameraAngle" min="0" max="360" value="15">
+        <label for="cameraAngle">Camera Horizontal</label>
+        <input type="range" id="cameraAngle" min="0" max="360" value="180">
+        <label for="cameraVert">Camera Vertical</label>
+        <input type="range" id="cameraVert" min="0" max="360" value="160">
         <br><br>
-        <label for="tailRotation">Tail Rotation</label>
-        <input type="range" id="tailRotation" min="-90" max="90" value="0">
+        <label for="tailRotation">Tail Vertical</label>
+        <input type="range" id="tailVert" min="-60" max="45" value="0">
+        <label for="tailHor">Tail Horizontal</label>
+        <input type="range" id="tailHor" min="-60" max="45" value="0">
         <br><br>
         <label for="headRotation">Head Rotation</label>
         <input type="range" id="headRotation" min="-45" max="45" value="0">
+        <label for="mandibleGrab">Mandible Grab</label>
+        <input type="range" id="mandibleGrab" min="-15" max="30" value="0">
+
         <!-- <button onclick="clearCanvas()">Clear Canvas</button>
         <button onclick="clearCanvas(); showDrawing()">Show Drawing</button>
         <br><br>
