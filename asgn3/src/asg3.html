@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Ryan King - Assignment 3</title>
+    </head>
+
+    <body onload="main()">
+        <h3>Ryan King</h3>
+        <a href="mailto:rytking@ucsc.edu">rytking@ucsc.edu</a>
+        <br><br>
+        <canvas id="asgn3" width="400" height="400">
+            Please use a browser that supports "canvas"
+        </canvas>
+        <br><br>
+        <span id="out"> XXX </span>
+        <br><br>
+        <label for="cameraAngle">Camera Horizontal</label>
+        <input type="range" id="cameraAngle" min="0" max="360" value="0">
+        <label for="cameraVert">Camera Vertical</label>
+        <input type="range" id="cameraVert" min="0" max="360" value="0">
+
+
+        <script src="../lib/cuon-matrix-cse160.js"></script>
+        <script src="../lib/webgl-utils.js"></script>
+        <script src="../lib/webgl-debug.js"></script>
+        <script src="../lib/cuon-utils.js"></script>
+        <script src="cube.js"></script>
+        <script src="triangle.js"></script>
+        <script src="asg3.js"></script>
+    </body>
+</html>
