@@ -21,6 +21,7 @@ let FSHADER_SOURCE = `
     uniform sampler2D u_Sampler2;
     uniform sampler2D u_Sampler3;
     uniform sampler2D u_Sampler4;
+    uniform sampler2D u_Sampler5;
     uniform int u_whichTexture;
     void main() {
         // gl_FragColor = u_FragColor;
@@ -39,13 +40,15 @@ let FSHADER_SOURCE = `
         }
         else if (u_whichTexture == 4) {
             gl_FragColor = texture2D(u_Sampler4, v_UV);
+        } else if (u_whichTexture == 5) {
+            gl_FragColor = texture2D(u_Sampler5, v_UV);
         } else {
             gl_FragColor = vec4(v_UV, 1.0, 1.0);
         }
     }`;
 
 let canvas, gl, a_Position, a_UV, u_FragColor, u_Size, u_ModelMatrix,
-    u_GlobalRotateMatrix, u_ViewMatrix, u_ProjMatrix, u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_Sampler4, u_whichTexture;
+    u_GlobalRotateMatrix, u_ViewMatrix, u_ProjMatrix, u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_Sampler4, u_Sampler5, u_whichTexture;
 
 function main() {
     setupWebGL();
@@ -94,7 +97,8 @@ function connectVariablesToGLSL() {
     u_Sampler2 = gl.getUniformLocation(gl.program, 'u_Sampler2');
     u_Sampler3 = gl.getUniformLocation(gl.program, 'u_Sampler3');
     u_Sampler4 = gl.getUniformLocation(gl.program, 'u_Sampler4');
-    if (!u_Sampler0 || !u_Sampler1 || !u_Sampler2 || !u_Sampler3 || !u_Sampler4) {
+    u_Sampler5 = gl.getUniformLocation(gl.program, 'u_Sampler5');
+    if (!u_Sampler0 || !u_Sampler1 || !u_Sampler2 || !u_Sampler3 || !u_Sampler4 || !u_Sampler5) {
         console.log('Failed to get the storage location of u_Sampler');
         return false;
     }
@@ -113,15 +117,15 @@ function addActionsForHtmlUI() {
 function initTextures() {
     let image0 = new Image();
     image0.onload = function() { loadTexture(u_Sampler0, image0, 0); };
-    image0.src = '../resources/wall.png';
+    image0.src = '../resources/square.png';
 
     let image1 = new Image();
     image1.onload = function() { loadTexture(u_Sampler1, image1, 1); };
-    image1.src = '../resources/square.png';
+    image1.src = '../resources/wall.png';
 
     let image2= new Image();
     image2.onload = function() { loadTexture(u_Sampler2, image2, 2); };
-    image2.src = '../resources/simple.png';
+    image2.src = '../resources/inside.png';
 
     let image3 = new Image();
     image3.onload = function() { loadTexture(u_Sampler3, image3, 3); };
@@ -129,7 +133,11 @@ function initTextures() {
 
     let image4 = new Image();
     image4.onload = function() { loadTexture(u_Sampler4, image4, 4); };
-    image4.src = '../resources/sky.png';
+    image4.src = '../resources/simple.png';
+
+    let image5 = new Image();
+    image5.onload = function() { loadTexture(u_Sampler5, image5, 5); };
+    image5.src = '../resources/sky.png';
 
     return true;
 }
@@ -165,9 +173,58 @@ function tick() {
 }
 
 // vectors
-let g_eye = new Vector3([0, 0, -2]);
-let g_lookat = new Vector3([0, 0, 0]);
+let g_eye = new Vector3([0, 1, -20]);
+let g_lookat = new Vector3([0, 1, 0]);
 let g_up = new Vector3([0, 1, 0]);
+
+let g_map = [
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[-1,4,-1,-1,-1,-1],[-1,-2,4,-1,-1,-1],[-1,-2,-2,4,-1,-1],[-1,-2,-2,-2,4,-1],[-1,-2,-2,-2,4,-1],[-1,-2,-2,4,-1,-1],[-1,-2,4,-1,-1,-1],[-1,4,-1,-1,-1,-1],[-1,-1,2,2,2,-1],[-1,-1,0,0,-1,-1],[-1,-1,2,2,2,-1],[-1,-1,-1,-1,-1,-1]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[-1,4,-1,-1,-1,-1],[-1,-2,4,-1,-1,-1],[-1,-2,-2,4,-1,-1],[-1,-2,-2,-2,4,-1],[-1,-2,-2,-2,4,-1],[-1,-2,-2,4,-1,-1],[-1,-2,4,-1,-1,-1],[-1,4,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,-1,-1,-1,-1,-1]],
+    [[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1],[-1]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[-1],[-1,1],[-1],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[-1],[-1],[-1],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+    [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+]
+
+function drawMap() {
+    let cube = new Cube();
+    cube.color = [.1, .15, .15, 1];
+    for (let i = 0; i < g_map.length; i++) {
+        for (let j = 0; j < g_map[i].length; j++) {
+            for (let k = 0; k < g_map[i][j].length; k++) {
+                if (g_map[i][j][k] != -2) {
+                    cube.textureNum = g_map[i][j][k];
+                    cube.matrix.setTranslate(16-j, k, 16-i);
+                    cube.render();
+                }
+            }
+        }
+    }
+}
 
 function renderAllShapes() {
     // projection matrix
@@ -192,23 +249,24 @@ function renderAllShapes() {
     let floor = new Cube();
     floor.textureNum = -1;
     floor.color = [.8, .7, .5, 1.0];
-    floor.matrix.setTranslate(0, -1, 0);
+    floor.matrix.setTranslate(.5, .49, .5);
     floor.matrix.scale(32, 0, 32);
     floor.render();
 
     // draw sky
     let sky = new Cube();
-    sky.textureNum = 4;
+    sky.textureNum = 5;
     sky.color = [.5, .7, .9, 1.0];
     sky.matrix.scale(100, 100, 100);
     sky.render();
 
-    // draw cube
-    let cube1 = new Cube();
-    cube1.color = [1, 1, 1, 1];
-    cube1.textureNum = 3;
-    // cube1.matrix.scale(.5, .5, .5);
-    cube1.render();
+    drawMap();
+
+    // // draw cube
+    // let cube1 = new Cube();
+    // cube1.color = [1, 1, 1, 1];
+    // cube1.textureNum = 2;
+    // cube1.render();
 
     let startTime = performance.now();
     let duration = performance.now() - startTime;
