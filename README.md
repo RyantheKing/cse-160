@@ -9,6 +9,9 @@ Github Pages Link: https://ryantheking.github.io/cse-160/asgn1/src/asg1.html
 ### Assignment 2: Blocky 3D Animal
 Github Pages Link: https://ryantheking.github.io/cse-160/asgn2/src/asg2.html
 
+### Assignment 3: Virtual World
+Github Pages Link: https://ryantheking.github.io/cse-160/asgn3/src/asg3.html
+
 ### Assignment 5: Exploring a High-Level Graphics Library 
 Github Pages Link: https://ryantheking.github.io/cse-160/asgn5/src/asg5.html
 
