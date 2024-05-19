@@ -48,6 +48,9 @@ let FSHADER_SOURCE = `
     }`;
 
 let canvas, gl, a_Position, a_UV, u_FragColor, u_Size, u_ModelMatrix, u_ViewMatrix, u_ProjMatrix, u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_Sampler4, u_Sampler5, u_whichTexture;
+let dragging = false;
+let prevx = 0;
+let prevy = 0;
 
 function main() {
     setupWebGL();
@@ -58,8 +61,20 @@ function main() {
 
     initTextures();
 
+    canvas.onmousedown = function(ev) {
+        dragging = true;
+        prevx = ev.clientX;
+        prevy = ev.clientY;
+    };
+
+    canvas.onmouseup = function(ev) {
+        dragging = false;
+    };
+
+    canvas.onmousemove = mousemove;
+
     gl.clearColor(0, 0, 0, 1.0);
-    // requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
 }
 
 function setupWebGL() {
@@ -107,37 +122,49 @@ function connectVariablesToGLSL() {
 
 let g_globalAngle = 0;
 let g_globalVert = 0;
+let y_movement_enabled = true;
 
 function addActionsForHtmlUI() {
     // g_globalAngle = document.getElementById('cameraAngle').value;
     // g_globalVert = document.getElementById('cameraVert').value;
     // document.getElementById('cameraAngle').addEventListener('mousemove', function() {g_globalAngle = this.value; renderAllShapes();});
     // document.getElementById('cameraVert').addEventListener('mousemove', function() {g_globalVert = this.value; renderAllShapes();});
+    y_movement_enabled = document.getElementById('yMove').checked;
+    document.getElementById('yMove').addEventListener('change', function() {y_movement_enabled = this.checked;});
+    document.getElementById('resetY').addEventListener('click', function() {
+        d = new Vector3([g_lookat.x - g_eye.x, 0, g_lookat.z - g_eye.z]);
+        d.normalize();
+        g_lookat.x = g_eye.x + d.x;
+        g_lookat.y = g_eye.y;
+        g_lookat.z = g_eye.z + d.z;
+    });
 }
+
+let texturesToLoad = 6;
 
 function initTextures() {
     let image0 = new Image();
-    image0.onload = function() { loadTexture(u_Sampler0, image0, 0); };
+    image0.onload = function() { loadTexture(u_Sampler0, image0, 0);};
     image0.src = '../resources/square.png';
 
     let image1 = new Image();
-    image1.onload = function() { loadTexture(u_Sampler1, image1, 1); };
+    image1.onload = function() { loadTexture(u_Sampler1, image1, 1);};
     image1.src = '../resources/wall.png';
 
     let image2= new Image();
-    image2.onload = function() { loadTexture(u_Sampler2, image2, 2); };
+    image2.onload = function() { loadTexture(u_Sampler2, image2, 2);};
     image2.src = '../resources/inside.png';
 
     let image3 = new Image();
-    image3.onload = function() { loadTexture(u_Sampler3, image3, 3); };
+    image3.onload = function() { loadTexture(u_Sampler3, image3, 3);};
     image3.src = '../resources/outside.png';
 
     let image4 = new Image();
-    image4.onload = function() { loadTexture(u_Sampler4, image4, 4); };
+    image4.onload = function() { loadTexture(u_Sampler4, image4, 4);};
     image4.src = '../resources/simple.png';
 
     let image5 = new Image();
-    image5.onload = function() { loadTexture(u_Sampler5, image5, 5); renderAllShapes();};
+    image5.onload = function() { loadTexture(u_Sampler5, image5, 5);};
     image5.src = '../resources/sky.png';
 
     return true;
@@ -154,6 +181,11 @@ function loadTexture(sampler, image, index) {
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.uniform1i(sampler, index);
+
+    texturesToLoad--;
+    if (texturesToLoad == 0) {
+        renderAllShapes();
+    }
 }
 
 function convertCoordinatesEventToGL(ev) {
@@ -181,9 +213,9 @@ function tick() {
 
 // vectors
 let g_eye = new Vector3([-16.5, 2, -14]);
-let g_lookat = new Vector3([-16.5, 2, 0]);
+let g_lookat = new Vector3([-16.5, 2, -13]);
 let g_up = new Vector3([0, 10, 0]);
-let d = new Vector3([0, 0, 0]);
+let d;
 
 let moveSpeed = .5;
 
@@ -191,61 +223,89 @@ function keydown(ev) {
     // use wasd
     if (ev.keyCode == 87) { // w
         // move towards lookat
-        d.x = g_lookat.x - g_eye.x;
-        d.z = g_lookat.z - g_eye.z;
-        d.normalize();
+        d = new Vector3([g_lookat.x - g_eye.x, g_lookat.y - g_eye.y, g_lookat.z - g_eye.z]);
+        // d.normalize();
         g_eye.x += d.x * moveSpeed;
         g_lookat.x += d.x * moveSpeed;
         g_eye.z += d.z * moveSpeed;
         g_lookat.z += d.z * moveSpeed;
+        if (y_movement_enabled) {
+            g_eye.y += d.y * moveSpeed;
+            g_lookat.y += d.y * moveSpeed;
+        }
     } else if (ev.keyCode == 83) { // s
         // move away from lookat
-        d.x = g_lookat.x - g_eye.x;
-        d.z = g_lookat.z - g_eye.z;
-        d.normalize();
+        d = new Vector3([g_lookat.x - g_eye.x, g_lookat.y - g_eye.y, g_lookat.z - g_eye.z]);
+        // d.normalize();
         g_eye.x -= d.x * moveSpeed;
         g_lookat.x -= d.x * moveSpeed;
         g_eye.z -= d.z * moveSpeed;
         g_lookat.z -= d.z * moveSpeed;
+        if (y_movement_enabled) {
+            g_eye.y -= d.y * moveSpeed;
+            g_lookat.y -= d.y * moveSpeed;
+        }
     }
     if (ev.keyCode == 65) { // a
         // move right
-        d.x = g_lookat.x - g_eye.x;
-        d.z = g_lookat.z - g_eye.z;
-        d.normalize();
+        d = new Vector3([g_lookat.x - g_eye.x, g_lookat.y - g_eye.y, g_lookat.z - g_eye.z]);
+        // d.normalize();
         g_eye.x += d.z * moveSpeed;
         g_lookat.x += d.z * moveSpeed;
         g_eye.z -= d.x * moveSpeed;
         g_lookat.z -= d.x * moveSpeed;
+        if (y_movement_enabled) {
+            g_eye.y -= d.y * moveSpeed;
+            g_lookat.y -= d.y * moveSpeed;
+        }
     } else if (ev.keyCode == 68) { // d
         // move left
-        d.x = g_lookat.x - g_eye.x;
-        d.z = g_lookat.z - g_eye.z;
-        d.normalize();
+        let d = new Vector3([g_lookat.x - g_eye.x, g_lookat.y - g_eye.y, g_lookat.z - g_eye.z]);
+        // d.normalize();
         g_eye.x -= d.z * moveSpeed;
         g_lookat.x -= d.z * moveSpeed;
         g_eye.z += d.x * moveSpeed;
         g_lookat.z += d.x * moveSpeed;
+        if (y_movement_enabled) {
+            g_eye.y += d.y * moveSpeed;
+            g_lookat.y += d.y * moveSpeed;
+        }
     }
     // q and e to pan left and right
     if (ev.keyCode == 81) { // e
         // move g_lookat 30 degrees to the right
-        let x = g_lookat.x - g_eye.x;
-        let z = g_lookat.z - g_eye.z;
-        let xprime = x * Math.cos(-Math.PI/6) - z * Math.sin(-Math.PI/6);
-        let zprime = x * Math.sin(-Math.PI/6) + z * Math.cos(-Math.PI/6);
-        g_lookat.x = g_eye.x + xprime;
-        g_lookat.z = g_eye.z + zprime;
+        let d = new Vector3([g_lookat.x - g_eye.x, g_lookat.y - g_eye.y, g_lookat.z - g_eye.z]);
+        // d.normalize();
+        g_lookat.x = g_eye.x + d.x * Math.cos(-Math.PI/10) - d.z * Math.sin(-Math.PI/10);
+        g_lookat.z = g_eye.z + d.x * Math.sin(-Math.PI/10) + d.z * Math.cos(-Math.PI/10);
     } else if (ev.keyCode == 69) { // q
         // move g_lookat 30 degrees to the left
-        let x = g_lookat.x - g_eye.x;
-        let z = g_lookat.z - g_eye.z;
-        let xprime = x * Math.cos(Math.PI/6) - z * Math.sin(Math.PI/6);
-        let zprime = x * Math.sin(Math.PI/6) + z * Math.cos(Math.PI/6);
-        g_lookat.x = g_eye.x + xprime;
-        g_lookat.z = g_eye.z + zprime;
+        let d = new Vector3([g_lookat.x - g_eye.x, g_lookat.y - g_eye.y, g_lookat.z - g_eye.z]);
+        // d.normalize();
+        g_lookat.x = g_eye.x + d.x * Math.cos(Math.PI/10) - d.z * Math.sin(Math.PI/10);
+        g_lookat.z = g_eye.z + d.x * Math.sin(Math.PI/10) + d.z * Math.cos(Math.PI/10);
     }
-    renderAllShapes();
+    // console.log(g_lookat.x-g_eye.x, g_lookat.y-g_eye.y, g_lookat.z-g_eye.z);
+}
+
+function mousemove(ev) {
+    if (!dragging) return;
+        let x = ev.clientX;
+        let y = ev.clientY;
+        let dx = x - prevx;
+        let dy = y - prevy;
+        prevx = x;
+        prevy = y;
+        d = new Vector3([g_lookat.x - g_eye.x, g_lookat.y - g_eye.y, g_lookat.z - g_eye.z]);
+        let theta = Math.atan2(d.z, d.x);
+        let phi = Math.acos(d.y);
+        theta -= dx * 0.0025;
+        phi -= dy * 0.0025;
+        if (phi > Math.PI - 0.1) phi = Math.PI - 0.1;
+        if (phi < 0.1) phi = 0.1;
+        g_lookat.x = g_eye.x + Math.sin(phi) * Math.cos(theta);
+        g_lookat.y = g_eye.y + Math.cos(phi);
+        g_lookat.z = g_eye.z + Math.sin(phi) * Math.sin(theta);
 }
 
 let bf = [-1,9,9,9,9,-1]; // basic floor with roof
@@ -262,13 +322,13 @@ let g_map = [
     [pl,cf,cf,cf,cf,cf,bf,cf,[-1,2,2,2,-1,-1],pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
     [pl,[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,1,9,9,9,-1],cf,bf,[2,9,0,-1,-1,-1],pl,pl,[-1,-1,-1,2,-1,-1],[-1,-1,-1,2,0,-1],[-1,-1,-1,2,0,-1],[-1,-1,-1,2,0,-1],[-1,-1,-1,2,0,-1],[-1,-1,-1,2,-1,-1],[-1,0,0,0,0,-1],[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,0,0,0,0,-1],[-1,-1,2,-1,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,2,-1,-1,-1],pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl,pl],
     [pl,[-1,-1,9,-1,9,-1],[-1,-1,9,-1,9,-1],[-1,-1,9,0,-1,-1],[-1,-1,9,9,9,-1],cf,bf,[2,9,0,-1,-1,-1],pl,[-1,-1,-1,2,-1,-1],cf,[2,9,9,9,9,0],[2,9,9,9,9,0],[2,9,9,9,9,0],[2,9,9,9,9,0],[-1,-1,2,9,9,-1],cf,[2,9,9,1,9,-1],[2,9,9,-1,9,-1],[2,9,9,-1,9,-1],[2,0,-1,-1,9,-1],[2,9,9,-1,9,-1],[2,9,9,-1,9,-1],[2,9,9,1,-1,-1],cf,[-1,2,9,9,9,-1],[2,9,9,9,-1,-1],[2,9,9,9,-1,-1],[2,9,9,9,-1,-1],[2,9,9,9,-1,-1],[2,9,9,9,-1,-1],[-1,-1,2,-1,-1,-1],pl,[-1,2,2,2,2,-1],pl,[-1,-1,0,0,-1,-1],pl,[-1,2,2,2,2,-1],pl,[-1,-1,0,0,-1,-1],pl,[-1,2,2,2,2,-1],pl,[-1,-1,0,0,-1,-1],pl,[-1,2,2,2,2,-1],pl,[-1,-1,0,0,-1,-1],pl,[-1,2,2,2,2,-1],pl,pl],
-    [pl,[-1,-1,9,-1,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],cf,bf,[2,9,9,0,9,-1],[-1,0,0,0,0,-1],[-1,0,0,0,0,-1],bf,bf,bf,bf,cf,bf,bf,[-1,9,9,-1,9,-1],bf,bf,[-1,9,9,-1,9,-1],bf,bf,bf,bf,bf,[2,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,-1,2,0,-1],[-1,-1,0,0,-1,-1],cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,[-1,2,2,2,2,-1],pl],
+    [pl,[-1,-1,9,-1,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],cf,bf,[2,9,9,0,9,-1],[-1,0,0,0,0,-1],[-1,0,0,0,0,-1],bf,bf,bf,bf,cf,bf,bf,[-1,9,9,-1,9,-1],bf,bf,[-1,9,9,-1,9,-1],bf,bf,bf,bf,bf,[2,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,0,0,-1,-1],cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,[-1,2,2,2,2,-1],pl],
     [pl,[-1,-1,-1,0,-1,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,1,9,9,9,-1],cf,bf,[2,9,9,-1,9,-1],bf,bf,bf,bf,bf,bf,cf,[-1,9,9,0,-1,-1],cf,[2,9,9,-1,9,-1],cf,cf,[2,9,9,-1,9,-1],cf,cf,[2,9,9,0,9,-1],[2,9,9,-1,9,-1],[-1,9,9,0,-1,-1],[2,9,9,9,0,-1],[-1,9,9,9,0,-1],[-1,9,9,9,0,-1],[-1,9,9,9,0,-1],[-1,9,9,9,0,-1],[-1,4,4,4,4,-1],[-1,4,4,4,4,-1],bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,cf,[-1,-1,0,0,-1,-1],pl],
     [pl,[-1,-1,9,9,9,-1],cf,cf,[2,9,9,0,-1,-1],[2,9,9,-1,9,-1],[-1,9,9,-1,9,-1],[2,9,9,0,9,-1],bf,bf,bf,bf,[-1,-1,2,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,-1,9,9,9,-1],[-1,9,9,-1,9,-1],cf,[-1,0,-1,0,9,-1],[-1,-1,9,-1,9,-1],[-1,-1,9,-1,9,-1],[-1,0,-1,-1,-1,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,1,9,-1,9,-1],cf,bf,[-1,2,2,-1,-1,-1],[-1,-1,2,-1,2,-1],[-1,0,9,9,9,-1],bf,bf,[-1,9,9,9,4,-1],[-1,9,9,9,4,-1],bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,bf,cf,[-1,2,2,2,2,-1],pl],
     [pl,[-1,-1,9,9,9,-1],[-1,3,9,9,9,-1],bf,bf,bf,bf,[2,9,9,-1,9,-1],bf,bf,bf,bf,[-1,-1,2,2,-1,-1],[-1,2,2,2,2,-1],[-1,-1,9,9,9,-1],[-1,9,9,-1,9,-1],cf,[-1,-1,9,9,9,-1],[-1,2,9,9,9,-1],[-1,2,9,9,9,-1],[-1,2,9,9,9,-1],[-1,2,9,9,9,-1],[-1,2,9,9,9,-1],[-1,-1,9,-1,9,-1],cf,bf,[-1,2,2,2,2,-1],[-1,-1,2,2,2,-1],[-1,0,9,9,9,-1],bf,bf,[-1,9,9,9,4,-1],[-1,9,9,9,4,-1],bf,bf,bf,bf,cf,cf,cf,cf,cf,cf,cf,cf,cf,cf,bf,bf,cf,[-1,-1,0,0,-1,-1],pl],
     [pl,[-1,-1,9,9,9,-1],cf,cf,cf,cf,bf,[2,9,9,-1,9,-1],bf,bf,bf,bf,[-1,-1,0,-1,2,-1],[-1,-1,0,2,2,-1],[-1,-1,9,9,9,-1],[-1,9,9,0,9,-1],[2,9,9,-1,9,-1],[-1,0,-1,0,-1,-1],[-1,-1,9,-1,9,-1],[-1,-1,9,-1,9,-1],[-1,-1,9,-1,9,-1],[-1,-1,9,-1,9,-1],[-1,-1,9,-1,9,-1],[-1,0,-1,0,-1,-1],cf,bf,[-1,-1,2,2,2,-1],[-1,-1,2,-1,-1,-1],[-1,0,9,9,9,-1],bf,bf,[-1,9,9,9,4,-1],[-1,9,9,9,4,-1],bf,bf,bf,bf,cf,[-1,2,2,2,2,-1],[-1,-1,0,0,-1,-1],pl,[-1,2,2,2,2,-1],[-1,2,2,2,2,-1],pl,[-1,-1,0,0,-1,-1],[-1,2,2,2,2,-1],cf,bf,bf,cf,[-1,-1,0,0,-1,-1],pl],
     [pl,[-1,-1,-1,0,-1,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,1,-1,0,9,-1],[2,9,9,-1,9,-1],[-1,9,9,-1,9,-1],[2,9,9,1,-1,-1],bf,bf,bf,bf,bf,bf,cf,bf,cf,cf,cf,cf,cf,cf,cf,[2,9,9,-1,9,-1],cf,bf,[2,9,9,9,0,-1],[-1,9,9,9,0,-1],[-1,9,9,9,0,-1],[-1,9,9,9,0,-1],[-1,9,9,9,0,-1],[-1,4,4,4,4,-1],[-1,4,4,4,4,-1],bf,bf,bf,bf,cf,pl,cf,cf,cf,cf,cf,cf,cf,cf,bf,bf,cf,[-1,2,2,2,2,-1],pl],
-    [pl,[-1,-1,9,-1,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],cf,bf,cf,[-1,0,0,0,0,-1],[-1,0,0,0,0,-1],bf,bf,bf,bf,cf,bf,bf,bf,cf,cf,cf,cf,cf,[-1,9,9,-1,9,-1],bf,bf,[2,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,-1,2,0,-1],[-1,-1,0,0,-1,-1],bf,bf,bf,bf,cf,[-1,2,2,2,2,-1],cf,bf,bf,bf,bf,bf,bf,bf,bf,bf,cf,[-1,-1,0,0,-1,-1],pl],
+    [pl,[-1,-1,9,-1,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],cf,bf,cf,[-1,0,0,0,0,-1],[-1,0,0,0,0,-1],bf,bf,bf,bf,cf,bf,bf,bf,cf,cf,cf,cf,cf,[-1,9,9,-1,9,-1],bf,bf,[2,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,9,9,9,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,0,0,-1,-1],bf,bf,bf,bf,cf,[-1,2,2,2,2,-1],cf,bf,bf,bf,bf,bf,bf,bf,bf,bf,cf,[-1,-1,0,0,-1,-1],pl],
     [pl,[-1,-1,9,0,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],cf,bf,[2,9,0,-1,-1,-1],pl,[-1,-1,-1,2,-1,-1],cf,[2,9,9,9,9,0],[2,9,9,9,9,0],[2,9,9,9,9,0],[2,9,9,9,9,0],[-1,-1,2,9,9,-1],[2,9,9,9,9,0],[2,9,9,9,9,0],cf,cf,[-1,2,2,2,2,-1],[-1,2,2,2,2,-1],cf,[2,9,9,1,-1,-1],cf,[-1,2,9,9,9,-1],[2,9,9,9,-1,-1],[2,9,9,9,-1,-1],[2,9,9,9,-1,-1],[2,9,9,9,-1,-1],[2,9,9,9,-1,-1],[-1,-1,2,-1,-1,-1],[-1,2,2,2,2,-1],bf,bf,bf,bf,cf,[-1,2,2,2,2,-1],cf,bf,bf,bf,bf,bf,bf,cf,[2,1,9,9,9,-1],cf,cf,[-1,2,2,2,2,-1],pl],
     [pl,[-1,-1,9,-1,9,-1],[-1,-1,9,9,9,-1],[-1,-1,9,9,9,-1],[-1,1,9,9,9,-1],cf,bf,[2,9,0,-1,-1,-1],pl,pl,[-1,-1,-1,2,-1,-1],[-1,-1,-1,2,0,-1],[-1,-1,-1,2,0,-1],[-1,-1,-1,2,0,-1],[-1,-1,-1,2,0,-1],[-1,-1,-1,2,-1,-1],[-1,2,-1,2,0,-1],[-1,2,-1,2,0,-1],[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],pl,pl,[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,2,-1,2,-1,-1],[-1,-1,2,-1,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,2,0,-1,-1],[-1,-1,2,-1,-1,-1],pl,pl,[-1,2,2,2,2,-1],[-1,-1,0,0,-1,-1],[-1,2,2,2,2,-1],[-1,-1,0,0,-1,-1],pl,pl,[-1,4,-1,-1,-1,-1],[-1,9,4,-1,-1,-1],[-1,9,9,4,-1,-1],[-1,9,9,9,4,-1],[-1,9,9,9,4,-1],[-1,9,9,4,-1,-1],[-1,9,4,-1,-1,-1],[-1,4,-1,-1,-1,-1],[-1,2,2,2,2,-1],[-1,-1,0,0,-1,-1],[-1,2,2,2,2,-1],pl,pl],
     [pl,[2,9,9,-1,9,-1],cf,cf,cf,cf,bf,cf,[-1,2,2,2,-1,-1],pl,[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],pl,[-1,4,-1,-1,-1,-1],[-1,9,4,-1,-1,-1],[-1,9,9,4,-1,-1],[-1,9,9,9,4,-1],[-1,9,9,9,4,-1],[-1,9,9,4,-1,-1],[-1,9,4,-1,-1,-1],[-1,4,-1,-1,-1,-1],pl,[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],[-1,3,3,3,-1,-1],pl],
@@ -278,22 +338,25 @@ let g_map = [
     [pl,pl,pl,pl,pl,pl,pl,pl,pl,pl]
 ];
 
-for (let i = 0; i < g_map.length; i++) {
-    console.log(g_map[i].length);
-}
-
+let stack_len = 0;
 function drawMap() {
     let cube = new Cube();
     cube.color = [.1, .15, .15, 1];
     for (let i = 0; i < g_map.length; i++) {
         for (let j = 0; j < g_map[i].length; j++) {
-            for (let k = 0; k < g_map[i][j].length; k++) {
+            stack_len = g_map[i][j].length;
+            for (let k = 0; k < stack_len; k++) {
                 if (g_map[i][j][k] != 9) {
                     cube.textureNum = g_map[i][j][k];
                     cube.matrix.setTranslate(26-j, k, 12-i);
                     cube.render();
                 }
             }
+            if (stack_len == 6) {
+                cube.textureNum = -1;
+                cube.matrix.setTranslate(26-j, 6, 12-i);
+                cube.render();
+            } 
         }
     }
 }
