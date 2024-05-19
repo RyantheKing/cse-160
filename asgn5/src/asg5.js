@@ -11,13 +11,13 @@ function main() {
 		alpha: true,
 	});
 
-	const fov = 60;
+	const fov = 90;
 	const aspect = 2; // the canvas default
 	const near = 0.015;
 	const far = 5000;
 
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-	camera.position.set(-60, 10, 60);
+	camera.position.set(-40, 10, 60);
 
 	const controls = new OrbitControls(camera, canvas);
 	controls.target.set(0, 0, 0);
@@ -39,21 +39,6 @@ function main() {
 	let sun_theta = document.getElementById('sun').value*Math.PI/180;
 	let directional_light;
 	let sun_position = new THREE.Vector3(4000*Math.sin(sun_theta), 0, 4000*Math.cos(sun_theta));
-	{
-		// directional light
-		const color = 0xFFFFFF;
-		const intensity = 5;
-		const light = new THREE.DirectionalLight(color, intensity);
-		light.position.set(sun_position);
-		light.castShadow = true;
-		light.shadow.mapSize.width = 2048;
-		light.shadow.mapSize.height = 2048;
-		light.shadow.camera.near = 0.5;
-		light.shadow.camera.far = 500;
-		scene.add(light);
-		scene.add(light.target);
-		directional_light = light;
-	}
 
 	// sun
 	let sun_obj;
@@ -95,6 +80,22 @@ function main() {
 			cones.push(cone);
 			scene.add(cone);
 		}
+	}
+
+	{
+		// directional light
+		const color = 0xFFFFFF;
+		const intensity = 5;
+		const light = new THREE.DirectionalLight(color, intensity);
+		light.position.set(sun_position);
+		light.castShadow = true;
+		light.shadow.mapSize.width = 2048;
+		light.shadow.mapSize.height = 2048;
+		light.shadow.camera.near = 0.5;
+		light.shadow.camera.far = 500;
+		scene.add(light);
+		scene.add(light.target);
+		directional_light = light;
 	}
 
 	{

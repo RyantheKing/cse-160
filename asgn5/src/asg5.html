@@ -27,7 +27,7 @@
     <body>
         <h3>Ryan King</h3>
         <a href="mailto:rytking@ucsc.edu">rytking@ucsc.edu</a>
-        <br><br>
+        <br><span>Beware, may crash mobile browsers. Processing intensive.</span><br>
         <canvas id="c" width="1200" height="600"></canvas>
         <!--Camera View-->
         <br>
@@ -50,11 +50,22 @@
         <!--Time Speed Multiplier Slider-->
         <label for="time-multiplier">Time Multiplier 1-500 (1x = Real-time 4546B planetary system speed)</label>
         <input type="range" id="time-multiplier" min="1" max="500" value="100">
-        <p>This is a WebGL project designed to simulate the fictional environment of planetary system 4546B from the game Subnautica (as closely as possible).</p>
-        <p>Change the camera view to see what the simulation looks like from different locations, or use the mouse to move the camera while in the 4546B System view.</p>
-        <p>One day on 4546B lasts 20 Earth minutes. Use the Time Multiplier slider to speed this up.</p>
-        <p>Note to grader: The sun is located behind the camera, you will have to turn the camera around to see it.</p>
-        <p>In addition, some light sources are easier to see in the scenes other than default. (Or are too weak to be seen on a sunlit surface)</p>
+        <br><br>
+        <span><b>NOTE TO GRADER:</b> The sun is located behind the camera, you will have to turn the camera around to see it. (It contains most of the primary shapes in the scene)</span>
+        <br>
+        <span>This is a WebGL project designed to simulate the fictional environment of planetary system 4546B from the game Subnautica (as closely as possible).</span>
+        <br>
+        <span>Change the camera view to see what the simulation looks like from different locations, or use the mouse to move the camera while in the 4546B System view.</span>
+        <br>
+        <span>One day on 4546B lasts 20 Earth minutes. Use the Time Multiplier slider to speed this up.</span>
+        <br>
+        <span>In addition, some light sources are easier to see in the scenes other than default. (Or are too weak to be seen on a sunlit surface)</span>
+        <br><br>
+        <span>Camera View 1) The planetary system overview making the planet, both moons and the sun visible.</span>
+        <br>
+        <span>Camera View 2) The spaceship crashing onto the planet's surface. The camera is locked to the spaceship, since the simulation is moving all the objects. The red moon is also visible in this view.</span>
+        <br>
+        <span>Camera View 3) The planet's surface. The camera is locked to both the horizon and the moon. The sun is visible during certain parts of the year (orbital position slider). The reflection of sunlight off the red moon can be seen on the planet's surface.</span>
         <script type="module" src="./asg5.js"></script>
     </body>
 </html>
