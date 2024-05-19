@@ -364,7 +364,7 @@ function drawMap() {
 function renderAllShapes() {
     // projection matrix
     let projMat = new Matrix4();
-    projMat.setPerspective(90, canvas.width/canvas.height, .1, 100);
+    projMat.setPerspective(90, canvas.width/canvas.height, .1, 110);
     gl.uniformMatrix4fv(u_ProjMatrix, false, projMat.elements);
 
     // view matrix
@@ -384,9 +384,17 @@ function renderAllShapes() {
     let floor = new Cube();
     floor.textureNum = -1;
     floor.color = [.8, .7, .5, 1.0];
-    floor.matrix.setTranslate(.5, .49, .5);
-    floor.matrix.scale(60, 0, 32);
+    floor.matrix.setTranslate(-19.5, .49, .5);
+    floor.matrix.scale(20, 0, 32);
     floor.render();
+
+    // draw ocean
+    let ocean = new Cube();
+    ocean.textureNum = -1;
+    ocean.color = [.2, .2, .8, 1.0];
+    ocean.matrix.setTranslate(10.5, .49, .5);
+    ocean.matrix.scale(40, 0, 32);
+    ocean.render();
 
     // draw sky
     let sky = new Cube();
