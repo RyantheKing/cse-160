@@ -392,6 +392,11 @@ function updateMap(x, y, z, type) {
     }
     column[y] = type;
     g_map[z*-1+12][x*-1+26] = column;
+    
+    if (x == 24 && y == 1 && z == 2) {
+        console.log('YOU WIN!');
+        winGame();
+    }
 }
 
 function mousemove(ev) {
@@ -796,4 +801,13 @@ function sendTextToHTML(text) {
         return;
     }
     htmlElm.innerHTML = text;
+}
+
+function winGame() {
+    let htmlElm = document.getElementById('game');
+    if (!htmlElm) {
+        console.log('Failed to get HTML element with id "game"');
+        return;
+    }
+    htmlElm.innerHTML = "<b>YOU WIN!&nbsp;&nbsp;</b>";
 }
