@@ -79,11 +79,15 @@ function main() {
 function setupWebGL() {
     canvas = document.getElementById('asgn3');
     gl = canvas.getContext('webgl', {preserveDrawingBuffer: true});
+
+    vertexBuffer = gl.createBuffer();
+    uvBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    
     if (!gl) {  
         console.log('Failed to get the rendering context for WebGL');
         return;
     }
-
     gl.enable(gl.DEPTH_TEST);
 }
 
@@ -440,13 +444,13 @@ function drawMap() {
                 if (g_map[i][j][k] != 9) {
                     cube.textureNum = g_map[i][j][k];
                     cube.matrix.setTranslate(26-j, k, 12-i);
-                    cube.render();
+                    cube.renderfast();
                 }
             }
             if (stack_len == 6) {
                 cube.textureNum = -1;
                 cube.matrix.setTranslate(26-j, 6, 12-i);
-                cube.render();
+                cube.renderfast();
             } 
         }
     }
