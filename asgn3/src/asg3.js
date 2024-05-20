@@ -55,6 +55,7 @@ let prevy = 0;
 function main() {
     setupWebGL();
     connectVariablesToGLSL();
+    initTrianges();
     addActionsForHtmlUI();
 
     document.onkeydown = keydown;
@@ -79,10 +80,6 @@ function main() {
 function setupWebGL() {
     canvas = document.getElementById('asgn3');
     gl = canvas.getContext('webgl', {preserveDrawingBuffer: true});
-
-    vertexBuffer = gl.createBuffer();
-    uvBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     
     if (!gl) {  
         console.log('Failed to get the rendering context for WebGL');
@@ -251,7 +248,7 @@ let g_lookat = new Vector3([-16.5, 2, -13]);
 let g_up = new Vector3([0, 10, 0]);
 let d;
 
-let moveSpeed = .5;
+let moveSpeed = .25;
 
 function keydown(ev) {
     // use wasd
@@ -367,12 +364,13 @@ function keydown(ev) {
 
 let selectedTexture = -1;
 function updateMap(x, y, z, type) {
-    let column = g_map[z*-1+12][x*-1+26];
+    let column = [...g_map[z*-1+12][x*-1+26]];
     let len = column.length;
     for (let i = 0; i < y-len; i++) {
         column[i] = 9;
     }
     column[y] = type;
+    g_map[z*-1+12][x*-1+26] = column;
 }
 
 function mousemove(ev) {
@@ -508,7 +506,7 @@ function drawPet() {
     head.matrix.rotate(g_headAngle, 0, 1, 0);
     head.matrix.translate(-.5, 0, -.5);
     let headCoords = new Matrix4(head.matrix);
-    head.render();
+    head.renderfast();
 
     //mandibles
     let mandible1 = new Cylinder();
@@ -630,7 +628,7 @@ function drawPet() {
     horn.matrix = new Matrix4(headCoords);
     horn.matrix.translate(-.35, .7, -.35);
     horn.matrix.scale(.4, .64, .4);
-    horn.render();
+    horn.renderfast();
 
     // draw tail
     let scale = [.15, .15, 0.6];
@@ -717,7 +715,7 @@ function renderAllShapes() {
     floor.color = [.8, .7, .5, 1.0];
     floor.matrix.setTranslate(-19.5, .49, .5);
     floor.matrix.scale(20, 0, 32);
-    floor.render();
+    floor.renderfast();
 
     // draw ocean
     let ocean = new Cube();
@@ -725,14 +723,14 @@ function renderAllShapes() {
     ocean.color = [.2, .2, .8, 1.0];
     ocean.matrix.setTranslate(10.5, .49, .5);
     ocean.matrix.scale(40, 0, 32);
-    ocean.render();
+    ocean.renderfast();
 
     // draw sky
     let sky = new Cube();
     sky.textureNum = 5;
     sky.color = [.5, .7, .9, 1.0];
     sky.matrix.scale(100, 100, 100);
-    sky.render();
+    sky.renderfast();
 
     drawMap();
     drawPet();
