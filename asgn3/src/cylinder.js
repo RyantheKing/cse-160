@@ -207,7 +207,7 @@ class Cylinder {
             y1 = Math.sin(rad_step * i)/2;
             x2 = Math.cos(rad_step * (i + 1))/2;
             y2 = Math.sin(rad_step * (i + 1))/2;
-            drawTriangle3D([x1, y1, 0.5, x2, y2, 0.5, x1, y1, -0.5, x1, y1, -0.5, x2, y2, -0.5, x2, y2, 0.5]);
+            drawTriangle3D(new Float32Array([x1, y1, 0.5, x2, y2, 0.5, x1, y1, -0.5, x1, y1, -0.5, x2, y2, -0.5, x2, y2, 0.5]));
             // console.log([x1, y1, 0.5, x2, y2, 0.5, x1, y1, -0.5, x1, y1, -0.5, x2, y2, -0.5, x2, y2, 0.5])
         }
     }
