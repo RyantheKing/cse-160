@@ -166,14 +166,36 @@ function renderAllShapes() {
     body.color = [.45, .75, .75, 1];
     body.matrix.setTranslate(-.3, 0, 0);
     body.matrix.rotate(90, 0, 1, 0);
+    let flipper1 = new Cylinder();
+    let flipper2 = new Cylinder();
+    flipper1.matrix = new Matrix4(body.matrix);
+    flipper2.matrix = new Matrix4(body.matrix);
+    let head = new Cube();
+    head.matrix = new Matrix4(body.matrix);
+    let tail = new Cylinder();
+    tail.matrix = new Matrix4(body.matrix);
     body.matrix.scale(.2, .2, 0.5);
     body.render();
 
+    // draw flippers
+    flipper1.color = [.4, .1, 0, 1];
+    flipper1.matrix.translate(.2, -.11, -.1);
+    flipper1.matrix.rotate(45, 1, 0, 0);
+    flipper1.matrix.rotate(60, 0, 1, 0);
+    flipper1.matrix.scale(.04, .04, .3);
+    flipper1.render();
+    // mirror flipper1
+    flipper2.color = [.4, .1, 0, 1];
+    flipper2.matrix.translate(-.2, -.11, -.1);
+    flipper2.matrix.rotate(45, 1, 0, 0);
+    flipper2.matrix.rotate(-60, 0, 1, 0);
+    flipper2.matrix.scale(.04, .04, .3);
+    flipper2.render();
+
     // draw head (cube)
-    let head = new Cube();
     head.color = [.6, .8, .9, 1];
-    head.matrix.setTranslate(-.58, 0, 0);
-    head.matrix.rotate(45, 0, 1, 0);
+    head.matrix.translate(0, 0, -.28);
+    head.matrix.rotate(-45, 0, 1, 0);
     head.matrix.scale(.11, .22, .11);
     head.matrix.translate(.5, 0, .5);
     head.matrix.rotate(g_headAngle, 0, 1, 0);
@@ -201,7 +223,6 @@ function renderAllShapes() {
     mandible1b.matrix.rotate(135, 0, 1, 0);
     mandible1b.matrix.scale(.4, .16, 2);
     mandible1b.render();
-
 
     let mandible2 = new Cylinder();
     mandible2.color = [.6, .2, 0, 1];
@@ -305,11 +326,9 @@ function renderAllShapes() {
     horn.render();
 
     // draw tail
-    let tail = new Cylinder();
     let scale = [.15, .15, 0.6];
     tail.color = [.4, .65, .65, 1];
-    tail.matrix.setTranslate(.2, 0, 0);
-    tail.matrix.rotate(90, 0, 1, 0);
+    tail.matrix.translate(0, 0, .5);
     tail.matrix.translate(0, 0, -scale[2]/2);
     tail.matrix.rotate(g_tailAngle, 1, 0, 0);
     tail.matrix.rotate(g_tailHoriz, 0, 1, 0);
@@ -325,15 +344,45 @@ function renderAllShapes() {
     tailb.matrix.rotate(g_tailAngle, 1, 0, 0);
     tailb.matrix.rotate(g_tailHoriz, 0, 1, 0);
     tailb.matrix.translate(0, 0, scale[2]*.7/2);
+    let fin1 = new Cylinder();
+    let fin2 = new Cylinder();
+    let fin3 = new Cylinder();
+    let fin4 = new Cylinder();
+    fin1.matrix = new Matrix4(tailb.matrix);
+    fin2.matrix = new Matrix4(tailb.matrix);
+    fin3.matrix = new Matrix4(tailb.matrix);
+    fin4.matrix = new Matrix4(tailb.matrix);
     tailb.matrix.scale(scale[0]*.7, scale[1]*.7, scale[2]*.7);
     tailb.render();
 
-    // let cube2 = new Cube();
-    // cube2.color = [1,1,0,1]
-    // cube2.matrix.translate(.7, 0, 0);
-    // cube2.matrix.rotate(45, 0, 0, 1);
-    // cube2.matrix.scale(0.25, .7, .5);
-    // cube2.render();
+    // draw fins on tailb
+    fin1.color = [.4, .1, 0, 1];
+    fin1.matrix.translate(.15, .06, .25);
+    fin1.matrix.rotate(-30, 1, 0, 0);
+    fin1.matrix.rotate(60, 0, 1, 0);
+    fin1.matrix.scale(.05, .05, .3);
+    fin1.render();
+    // mirror fin1
+    fin2.color = [.4, .1, 0, 1];
+    fin2.matrix.translate(-.15, .06, .25);
+    fin2.matrix.rotate(-30, 1, 0, 0);
+    fin2.matrix.rotate(-60, 0, 1, 0);
+    fin2.matrix.scale(.05, .05, .3);
+    fin2.render();
+
+    fin3.color = [.4, .1, 0, 1];
+    fin3.matrix.translate(-.07, -.1, .15);
+    fin3.matrix.rotate(60, 1, 0, 0);
+    fin3.matrix.rotate(-30, 0, 1, 0);
+    fin3.matrix.scale(.04, .04, .15)
+    fin3.render();
+    // mirror fin3
+    fin4.color = [.4, .1, 0, 1];
+    fin4.matrix.translate(.07, -.1, .15);
+    fin4.matrix.rotate(60, 1, 0, 0);
+    fin4.matrix.rotate(30, 0, 1, 0);
+    fin4.matrix.scale(.04, .04, .15)
+    fin4.render();
 
     let duration = performance.now() - startTime;
     sendTextToHTML(" ms: " + Math.round(duration) + " fps: " + Math.round(1000/duration));
