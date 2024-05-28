@@ -196,7 +196,7 @@ function addActionsForHtmlUI() {
     document.getElementById('lightY').addEventListener('mousemove', function(ev) {if (ev.buttons == 1) {g_lightPos[1] = +this.value;}});
     document.getElementById('lightZ').addEventListener('mousemove', function(ev) {if (ev.buttons == 1) {g_lightPos[2] = +this.value;}});
     document.getElementById('resetLight').addEventListener('click', function() {
-        g_lightPos = [3, 0, 0];
+        g_lightPos = [0, 0, 0];
         document.getElementById('lightX').value = g_lightPos[0];
         document.getElementById('lightY').value = g_lightPos[1];
         document.getElementById('lightZ').value = g_lightPos[2];
