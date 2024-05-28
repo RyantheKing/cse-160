@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Ryan King - Assignment 4</title>
+    </head>
+
+    <body onload="main()">
+        <canvas id="asgn4" width="400" height="400">
+            Please use a browser that supports "canvas"
+        </canvas>
+        <span id="game">Find this block (inside) and delete it to win!&nbsp;&nbsp;</span><img src="../resources/goal.png" width="80" height="80">
+        <br>
+        <span id="out"> XXX </span>
+        <br><br>
+        <span>Use WASD to navigate and Q/E/mouse to rotate the camera</span>
+        <br><br>
+        <label for="lightOn">Light Toggle</label>
+        <input type="checkbox" id="lightOn">
+        <br>
+        <label for="normalsOn">Normals Toggle</label>
+        <input type="checkbox" id="normalsOn">
+        <br>
+        <label for="animateLight">Animate Light</label>
+        <input type="checkbox" id="animateLight">
+        <br><br>
+        <label for="Light X">Light X</label>
+        <input type="range" id="lightX" min="-9" max="1" value="3" step="0.01">
+        <label for="Light Y">Light Y</label>
+        <input type="range" id="lightY" min="-1" max="2" value="-1" step="0.01">
+        <label for="Light Z">Light Z</label>
+        <input type="range" id="lightZ" min="-8" max="8" value="1" step="0.01">
+        <button id="resetLight">Center Light</button>
+        <br>
+        <label for="lightRed">Red</label>
+        <input type="range" id="lightRed" min="0" max="1" value="1" step="0.01">
+        <label for="lightGreen">Green</label>
+        <input type="range" id="lightGreen" min="0" max="1" value="1" step="0.01">
+        <label for="lightBlue">Blue</label>
+        <input type="range" id="lightBlue" min="0" max="1" value="1" step="0.01">
+        <br><br>
+        <label for="yMove">Enable Y movement (not recommended)</label>
+        <input type="checkbox" id="yMove">
+        <button id="resetY">Reset Y angle</button>
+        <!-- <label for="cameraAngle">Camera Horizontal</label>
+        <input type="range" id="cameraAngle" min="0" max="360" value="0">
+        <label for="cameraVert">Camera Vertical</label>
+        <input type="range" id="cameraVert" min="0" max="360" value="0"> -->
+        <br><br>
+        <span><b>Map Modification</b></span>
+        <span>Press "Z" to place and "X" to delete blocks. Select block type with keys 1-7</span>
+        <br>
+        <span>1. Green Wall</span>
+        <span>&nbsp;&nbsp;2.</span><img src="../resources/square.png" width="40" height="40">
+        <span>&nbsp;&nbsp;3.</span><img src="../resources/wall.png" width="40" height="40">
+        <span>&nbsp;&nbsp;4.</span><img src="../resources/inside.png" width="40" height="40">
+        <span>&nbsp;&nbsp;5.</span><img src="../resources/outside.png" width="40" height="40">
+        <span>&nbsp;&nbsp;6.</span><img src="../resources/simple.png" width="40" height="40">
+        <span>&nbsp;&nbsp;7.</span><img src="../resources/sky.png" width="40" height="40">
+        <br>
+        <span><b>Map Save Slots</b> (slot data persists after page reload)<span><br>
+        <button id="save1">Save Slot 1</button><button id="load1">Load Slot 1</button>
+        <br>
+        <button id="save2">Save Slot 2</button><button id="load2">Load Slot 2</button>
+        <br>
+        <button id="save3">Save Slot 3</button><button id="load3">Load Slot 3</button>
+        <p>Map is 60x32. Building is 50x21.</p>
+        <script src="../lib/cuon-matrix-cse160.js"></script>
+        <script src="../lib/webgl-utils.js"></script>
+        <script src="../lib/webgl-debug.js"></script>
+        <script src="../lib/cuon-utils.js"></script>
+        <script src="cube.js"></script>
+        <script src="triangle.js"></script>
+        <script src="cylinder.js"></script>
+        <script src="sphere.js"></script>
+        <script src="asg4.js"></script>
+    </body>
+</html>
