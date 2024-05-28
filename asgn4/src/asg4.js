@@ -25,6 +25,7 @@ let FSHADER_SOURCE = `
     uniform vec4 u_FragColor;
     uniform vec3 u_LightPos;
     uniform vec3 u_LightColor;
+    uniform float u_LightIntensity;
     uniform vec3 u_cameraPos;
     uniform bool u_lightOn;
     uniform bool u_normalsOn;
@@ -60,6 +61,8 @@ let FSHADER_SOURCE = `
         } else {
             gl_FragColor = vec4(v_UV, 1.0, 1.0);
         }
+
+        vec3 lightColor = u_LightColor * u_LightIntensity;
         vec3 lightVector = normalize(u_LightPos - vec3(v_VertPos));
         vec3 normal = normalize(v_Normal);
         float r = length(lightVector);
@@ -69,15 +72,15 @@ let FSHADER_SOURCE = `
         vec3 eye = normalize(u_cameraPos - vec3(v_VertPos));
         float specular = pow(max(dot(eye, reflect(-lightVector, normal)), 0.0), 30.0);
 
-        vec3 diffuse = vec3(gl_FragColor) * u_LightColor * nDotL * 0.8;
-        vec3 ambient = vec3(gl_FragColor) * u_LightColor * 0.3;
+        vec3 diffuse = vec3(gl_FragColor) * lightColor * nDotL * 0.8;
+        vec3 ambient = vec3(gl_FragColor) * lightColor * 0.2;
         if (u_lightOn) {
-            gl_FragColor = vec4(diffuse + ambient + u_LightColor*specular, 1.0);
+            gl_FragColor = vec4(diffuse + ambient + lightColor*specular, 1.0);
         }
     }`;
 
 let canvas, gl, a_Position, a_UV, u_FragColor, u_Size, u_ModelMatrix, u_lightOn, u_LightColor,
-u_ViewMatrix, u_ProjMatrix, u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_normalsOn, 
+u_ViewMatrix, u_ProjMatrix, u_Sampler0, u_Sampler1, u_Sampler2, u_Sampler3, u_normalsOn, u_LightIntensity, 
 u_Sampler4, u_Sampler5, u_whichTexture, a_Normal, u_LightPos, u_cameraPos, u_NormalMatrix;
 let dragging = false;
 let prevx = 0;
@@ -140,6 +143,7 @@ function connectVariablesToGLSL() {
     u_lightOn = gl.getUniformLocation(gl.program, 'u_lightOn');
     u_normalsOn = gl.getUniformLocation(gl.program, 'u_normalsOn');
     u_LightColor = gl.getUniformLocation(gl.program, 'u_LightColor');
+    u_LightIntensity = gl.getUniformLocation(gl.program, 'u_LightIntensity');
 
     if (a_Position < 0 || a_UV < 0 || !u_FragColor || !u_ModelMatrix || !u_ViewMatrix || !u_NormalMatrix
         || !u_ProjMatrix || !u_whichTexture || a_Normal < 0 || !u_LightPos || !u_cameraPos) {
@@ -163,6 +167,7 @@ let g_globalAngle = 0;
 let g_globalVert = 0;
 let g_lightPos = [-1, -1, 1];
 let g_lightColor = [1, 1, 1];
+let g_lightIntensity = 1;
 let g_lightOn = true;
 let g_normalsOn = false;
 let y_movement_enabled = true;
@@ -203,6 +208,9 @@ function addActionsForHtmlUI() {
     document.getElementById('lightRed').addEventListener('mousemove', function(ev) {if (ev.buttons == 1) {g_lightColor[0] = +this.value;}});
     document.getElementById('lightGreen').addEventListener('mousemove', function(ev) {if (ev.buttons == 1) {g_lightColor[1] = +this.value;}});
     document.getElementById('lightBlue').addEventListener('mousemove', function(ev) {if (ev.buttons == 1) {g_lightColor[2] = +this.value;}});
+
+    document.getElementById('intensity').value = g_lightIntensity;
+    document.getElementById('intensity').addEventListener('mousemove', function(ev) {if (ev.buttons == 1) {g_lightIntensity = +this.value;}});
 
     g_lightOn = document.getElementById('lightOn').checked;
     gl.uniform1i(u_lightOn, g_lightOn);
@@ -846,6 +854,7 @@ function renderAllShapes() {
 
     gl.uniform3f(u_LightPos, 24+g_lightPos[0], 2+g_lightPos[1], 2+g_lightPos[2]);
     gl.uniform3f(u_LightColor, g_lightColor[0], g_lightColor[1], g_lightColor[2]);
+    gl.uniform1f(u_LightIntensity, g_lightIntensity);
     gl.uniform3f(u_cameraPos, g_eye.x, g_eye.y, g_eye.z);
 
     // view matrix
