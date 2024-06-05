@@ -11,13 +11,13 @@ function main() {
 		alpha: true,
 	});
 
-	const fov = 90;
+	const fov = 60;
 	const aspect = 2; // the canvas default
 	const near = 0.015;
 	const far = 5000;
 
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-	camera.position.set(-40, 10, 60);
+	camera.position.set(-60, 10, 60);
 
 	const controls = new OrbitControls(camera, canvas);
 	controls.target.set(0, 0, 0);
